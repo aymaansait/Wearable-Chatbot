@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+
+# VS Code
+.vscode/
+
+# Recordings
+recordings/
+
+# Python builds
+build/
+dist/
+
+# Arduino
+*.bin
+*.elf
+
+# Windows
+Thumbs.db
