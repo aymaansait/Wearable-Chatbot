@@ -22,3 +22,11 @@ Build a compact wearable AI chatbot capable of:
 - Real-time waveform visualization
 - WAV recording
 - Python audio pipeline
+
+## Milestone 1
+
+- ESP32 DevKit (WROOM) audio acquisition working
+- Python audio pipeline working
+- Oscilloscope working
+- WAV recorder working
+- ESP32-S3 SuperMini verified and ready for migration
