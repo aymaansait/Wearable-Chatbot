@@ -11,7 +11,7 @@ class SerialAudioSource:
 
     def __init__(
         self,
-        port="COM12",
+        port="COM11",
         baud=460800,
         sample_rate=16000,
         frame_duration_ms=20,
