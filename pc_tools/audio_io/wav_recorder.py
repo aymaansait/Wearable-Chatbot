@@ -31,19 +31,43 @@ class WavRecorder:
         self.recordings_dir = Path("../recordings")
         self.recordings_dir.mkdir(parents=True, exist_ok=True)
 
+        self.wavefile = None
+        self.filepath = None
+        self.is_recording = False
+
+    # ----------------------------------------------------
+    # Start a new recording
+    # ----------------------------------------------------
+    def start_recording(self):
+
+        if self.is_recording:
+            return
+
+        # Reset AGC for every new recording
+        self.current_gain = 1.0
+        self.envelope = 0.0
+
         filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S.wav")
 
         self.filepath = self.recordings_dir / filename
 
-        print(f"Recording to: {self.filepath}")
+        print(f"\nRecording to: {self.filepath}")
 
         self.wavefile = wave.open(str(self.filepath), "wb")
 
         self.wavefile.setnchannels(1)
         self.wavefile.setsampwidth(2)
-        self.wavefile.setframerate(sample_rate)
+        self.wavefile.setframerate(self.sample_rate)
 
+        self.is_recording = True
+
+    # ----------------------------------------------------
+    # Receive audio frames
+    # ----------------------------------------------------
     def on_audio_frame(self, samples):
+
+        if not self.is_recording:
+            return
 
         samples = samples.astype(np.float32)
 
@@ -94,7 +118,13 @@ class WavRecorder:
             adjusted.tobytes()
         )
 
-    def close(self):
+    # ----------------------------------------------------
+    # Stop recording
+    # ----------------------------------------------------
+    def stop_recording(self):
+
+        if not self.is_recording:
+            return None
 
         self.wavefile.close()
 
@@ -105,4 +135,9 @@ class WavRecorder:
             latest_file
         )
 
+        self.wavefile = None
+        self.is_recording = False
+
         print(f"Latest recording saved as: {latest_file}")
+
+        return self.filepath
