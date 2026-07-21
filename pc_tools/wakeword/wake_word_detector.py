@@ -17,12 +17,14 @@ class WakeWordDetector:
         smoothing_window=5,
         cooldown_chunks=15,       # ~1.2s cooldown after a trigger
         chunk_size=1280,          # openWakeWord requires 80ms chunks at 16kHz
+        min_abs_mean=80.0,        # Guard against silence / near-silent noise
     ):
 
         self.model = Model(wakeword_models=[model_name], inference_framework="onnx")
         self.model_name = model_name
         self.threshold = threshold
         self.chunk_size = chunk_size
+        self.min_abs_mean = min_abs_mean
 
         self.recent_scores = deque(maxlen=smoothing_window)
         self.cooldown_chunks = cooldown_chunks
@@ -40,6 +42,14 @@ class WakeWordDetector:
 
             chunk = self._buffer[:self.chunk_size]
             self._buffer = self._buffer[self.chunk_size:]
+
+            # Ignore silent or near-silent chunks before scoring. This is the
+            # most important guard against the wake detector misfiring after
+            # the follow-up timer ends and the mic is just picking up ambient
+            # noise or the assistant's own playback.
+            chunk_abs_mean = float(np.mean(np.abs(chunk)))
+            if chunk_abs_mean < self.min_abs_mean:
+                continue
 
             prediction = self.model.predict(chunk)
             score = prediction[self.model_name]
