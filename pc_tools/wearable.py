@@ -8,7 +8,10 @@ from audio.serial_audio_source import SerialAudioSource
 
 from visualization.oscilloscope import Oscilloscope
 from audio_io.wav_recorder import WavRecorder
-from audio_io.audio_player import AudioPlayer
+
+#from audio_io.audio_player import AudioPlayer
+from audio_io.serial_speaker_player import SerialSpeakerPlayer
+
 from audio_io.tone_generator import generate_shutdown_tone
 
 # Keep the wearable architecture unchanged, but swap the backend class so
@@ -54,7 +57,9 @@ def main():
 
     groq = GroqChat()
     tts = TextToSpeech()
-    player = AudioPlayer()
+    
+    #player = AudioPlayer()
+    player = SerialSpeakerPlayer(port="COM11")
 
     shutdown_tone_path = generate_shutdown_tone()
 
